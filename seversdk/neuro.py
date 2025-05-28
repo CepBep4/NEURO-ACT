@@ -3,15 +3,10 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 import time
 
 def modelInit():
-    path_model = "ollama_models/models/manifests/registry.ollama.ai/library/deepseek-r1/32b"
+    model_id = "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"
 
-    tokenizer = AutoTokenizer.from_pretrained(path_model)
-    model = AutoModelForCausalLM.from_pretrained(
-        path_model,
-        torch_dtype=torch.float16,
-        device_map="gpu",  # или "auto", если есть GPU
-        low_cpu_mem_usage=True
-    )
+    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    model = AutoModelForCausalLM.from_pretrained(model_id, torch_dtype=torch.float16, device_map="gpu")
 
     return model, tokenizer
 
