@@ -1,0 +1,9 @@
+    # #Конвертация в WAV
+    # try:
+    #     convertMp3ToWav( seversdk function
+    #         input_path=f'inbox_audio/{path}',
+    #         output_path=f'results/{path.replace(".mp3", "")}.wav'
+    #     )
+    # except Exception as e:
+    #     logger.critical(f"Ошибка при конвертации файла {path}: {e}")
+    #     logger.info(f"Файл {path} не обработан")

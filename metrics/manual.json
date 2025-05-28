@@ -1,0 +1,8 @@
+{
+    "thread_count": 0,
+    "thread_count_max": 5,
+    "queue": [],
+    "handled_files": [],
+    "version": "0.0.3a",
+    "port": 8080
+}
