@@ -13,8 +13,8 @@ def worker(data: dict, metrics: Metrics, model):
         startTime = time.time()
         
         #Получаем промпт
-        prompt = "Проанализируй текст"
-        ...
+        with open("metrics/prompt.txt", "r") as file:
+            prompt = file.read().format(text=data["text"])
         
         #Дипсиковская дистилированная модель
         response = pipe(*model, prompt)

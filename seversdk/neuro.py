@@ -2,7 +2,8 @@ import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import time
 
-def modelInit():
+def modelInit() -> object:
+    #При необходимости заменить модель
     model_id = "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"
 
     tokenizer = AutoTokenizer.from_pretrained(model_id)
@@ -10,7 +11,7 @@ def modelInit():
     print(torch.cuda.is_available())
     return model, tokenizer
 
-def pipe(model, tokenizer, prompt):
+def pipe(model, tokenizer, prompt) -> str | dict:
     prompt = prompt
     inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
 
