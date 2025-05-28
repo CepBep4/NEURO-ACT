@@ -6,7 +6,7 @@ def modelInit():
     model_id = "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"
 
     tokenizer = AutoTokenizer.from_pretrained(model_id)
-    model = AutoModelForCausalLM.from_pretrained(model_id, torch_dtype=torch.float16, device_map="gpu")
+    model = AutoModelForCausalLM.from_pretrained(model_id, torch_dtype=torch.float16, device_map="cuda:0")
 
     return model, tokenizer
 
