@@ -4,7 +4,7 @@ import time
 
 def modelInit() -> object:
     #При необходимости заменить модель
-    model_id = "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"
+    model_id = "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B"
 
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     model = AutoModelForCausalLM.from_pretrained(model_id, torch_dtype=torch.float16, device_map="auto")
@@ -16,7 +16,7 @@ def pipe(model, tokenizer, prompt) -> str | dict:
     inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
 
     with torch.no_grad():
-        outputs = model.generate(**inputs, max_new_tokens=4)
+        outputs = model.generate(**inputs, max_new_tokens=1000)
 
     response = tokenizer.decode(outputs[0], skip_special_tokens=True)
     
