@@ -1,5 +1,5 @@
 #Импорты
-from seversdk import Metrics, logger, modelInit, pipe, saveToExcel
+from seversdk import Metrics, logger, pipe, saveToExcel
 import os
 import json
 import traceback
