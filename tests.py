@@ -2,15 +2,15 @@
 import requests
 import json
 
-def testServer():
+def testServer(taskQ):
     #Тестовые данные
     url = "http://127.0.0.1:8000/sendHandle/"
     
-    file_path = "testdata/test.mp3"
+    file_path = f"testdata/test{taskQ}.mp3"
     
     data = {
         "text": "Привет друзья, как дела",
-        "session_id": "DC-000000_CAL-a1b2c3d4",
+        "session_id": f"DC-0000{taskQ}_CAL-a1b2c3d4",
         "time_stamp": "99.99.9999 99:99:99",
         "file_handled": "audo.mp3"
     }
@@ -27,5 +27,6 @@ def testServer():
 
     return response.status_code, response.text
 
-print(testServer())
+for i in range(10):
+    print(testServer(i))
     
