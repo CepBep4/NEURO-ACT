@@ -3,8 +3,8 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 import time
 import os
 
-import os
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+os.environ["TRANSFORMERS_CACHE"] = "/mnt/data/hf_cache"
 
 def modelInit() -> object:
     #При необходимости заменить модель
