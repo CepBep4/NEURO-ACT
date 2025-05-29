@@ -27,7 +27,5 @@ def testServer():
 
     return response.status_code, response.text
 
-# print(testServer())
-
-print(json.loads(open("ai_result.json", 'r').read()))
+print(testServer())
     
