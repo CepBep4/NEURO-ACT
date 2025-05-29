@@ -6,7 +6,7 @@ import traceback
 import time
 
 #Рекурсивня функция работающая на потоке
-def worker(data: dict, metrics: Metrics, model):    
+def worker(data: dict, metrics: Metrics):    
     #Полезная работа
     try:
         #Засекаем время
@@ -17,7 +17,7 @@ def worker(data: dict, metrics: Metrics, model):
             prompt = file.read().format(text=data["text"])
         
         #Дипсиковская дистилированная модель
-        response = pipe(*model, prompt)
+        response = pipe(prompt)
         
         #Формируем путь до папки results
         path = f"results/{data['session_id']}"

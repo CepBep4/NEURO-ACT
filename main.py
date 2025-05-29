@@ -19,14 +19,13 @@ app = FastAPI()
 #Инициализируем метрики
 metrics = Metrics()
 
-#Иницализируем модель
-model = modelInit()
+# #Иницализируем модель
+# model = modelInit()
 
 #Отдаём лог о запуске
 logger.info(f'''
 Программа запущена - {datetime.datetime.now()}
 Макс кол-во потоков - {metrics.threadCountMax}
-Нейросеть готова к работе {model != None}
 CUDA доступна: {torch.cuda.is_available()}
 ''')
 
@@ -76,7 +75,7 @@ def handler(data):
         if WORK_MODE == "t":
             threading.Thread(
                 target=worker,
-                args=(data, metrics, model)
+                args=(data, metrics,)
             ).start()
         
         #Увеличиваем количество потоков в метриках

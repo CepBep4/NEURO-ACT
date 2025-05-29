@@ -1,43 +1,31 @@
-import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM
-import time
 import os
+import time
+import requests
 
-os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
-os.environ["TRANSFORMERS_CACHE"] = "/mnt/data/hf_cache"
+# Если Ollama слушает нестандартный адрес/порт, укажите здесь:
+OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 
-def modelInit() -> object:
-    #При необходимости заменить модель
-    model_id = "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B"
+MODEL = "deepseek-r1:32b"
 
-    tokenizer = AutoTokenizer.from_pretrained(model_id)
-    model = AutoModelForCausalLM.from_pretrained(model_id, torch_dtype=torch.float16, device_map="cuda",low_cpu_mem_usage=True)
-    print(torch.cuda.is_available())
-    return model, tokenizer
-
-def pipe(model, tokenizer, prompt) -> str | dict:
-    prompt = prompt
-    inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
-
-    with torch.no_grad():
-        outputs = model.generate(**inputs, max_new_tokens=200)
-
-    response = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    
-    #Иначе необходимо вернуть данные в таком формате
-    responseData = {
-        "token_routing_map":None, #Карта маршрутизации токенов
-        "expert_outputs":None, #Выводы экспертов
-        "output":None, #Ответ нейросети
-        "logic_summary":None, #Итоговая логика обработки
+def pipe(prompt: str) -> str:
+    url = f"{OLLAMA_HOST}/api/chat"
+    payload = {
+        "model": MODEL,
+        "messages": [
+            {"role": "user", "content": prompt}
+        ],
+        "stream": False
     }
-    return response
-
-
+    resp = requests.post(url, json=payload)
+    resp.raise_for_status()
+    data = resp.json()
+    # В зависимости от версии API ключ может называться 'message' или 'choices'
+    if "message" in data:
+        return data["message"]["content"]
+    elif "choices" in data and data["choices"]:
+        return data["choices"][0]["message"]["content"]
+    else:
+        raise RuntimeError(f"Unexpected Ollama response format: {data}")
+    
 if __name__ == "__main__":
-    model, tokenizer = modelInit()
-    st = time.time()
-    print(pipe(model, tokenizer, "1+1="))
-    print(round(time.time()-st,3))
-    
-    
+    print(pipe("Привет"))
