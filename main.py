@@ -1,7 +1,7 @@
 import threading
 import multiprocessing
 from worker import worker
-from seversdk import logger, Metrics, vaildData, modelInit
+from seversdk import logger, Metrics, vaildData
 import traceback
 from fastapi import FastAPI, File, Form, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
