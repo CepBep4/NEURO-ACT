@@ -11,7 +11,7 @@ def modelInit() -> object:
     model_id = "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B"
 
     tokenizer = AutoTokenizer.from_pretrained(model_id)
-    model = AutoModelForCausalLM.from_pretrained(model_id, torch_dtype=torch.float16, device_map="cuda")
+    model = AutoModelForCausalLM.from_pretrained(model_id, torch_dtype=torch.float16, device_map="cuda",low_cpu_mem_usage=True)
     print(torch.cuda.is_available())
     return model, tokenizer
 
