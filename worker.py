@@ -1,5 +1,5 @@
 #Импорты
-from seversdk import Metrics, logger, pipe, saveToExcel
+from seversdk import Metrics, loggerAnalysis, loggerErrors, loggerSystem, pipe, saveToExcel
 import os
 import json
 import traceback
@@ -67,10 +67,10 @@ def worker(data: dict, metrics: Metrics):
         ...
         
         #Выводим лог об обработке
-        logger.info(f"Сессия {data['session_id']} успешно обработана, время обработки: {round(time.time()-startTime, 3)}сек.")
+        loggerAnalysis.info(f"Сессия {data['session_id']} успешно обработана, время обработки: {round(time.time()-startTime, 3)}сек.")
     except Exception as e:
         traceback.print_exc()
-        logger.critical(f"Данные НЕ обработаны сессия: {data['session_id']} ошибка: {e}")
+        loggerErrors.critical(f"Данные НЕ обработаны сессия: {data['session_id']} ошибка: {e}")
     
     #Проверяем очередь
     if metrics.queue != []:
@@ -78,7 +78,7 @@ def worker(data: dict, metrics: Metrics):
         metrics.queue.remove(newTask)
         
         #Запускаем задачу
-        logger.info(f"Сессия: {newTask['session_id']} передана в обработку")
+        loggerSystem.info(f"Сессия: {newTask['session_id']} передана в обработку")
         worker(newTask, metrics)
     
     else:
@@ -86,5 +86,5 @@ def worker(data: dict, metrics: Metrics):
         metrics.threadConut -= 1
          
         #Завершаем работу потока
-        logger.info("Поток завершил работу")
+        loggerSystem.info("Поток завершил работу")
         return None

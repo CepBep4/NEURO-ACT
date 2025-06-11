@@ -1,10 +1,11 @@
 import threading
 import multiprocessing
 from worker import worker
-from seversdk import logger, Metrics, vaildData
+from seversdk import loggerErrors, loggerApiReceive, loggerSystem, Metrics, vaildData
 import traceback
 from fastapi import FastAPI, File, Form, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 import json
 import os
 import shutil
@@ -16,6 +17,15 @@ WORK_MODE = 't' # t - threadiing, p - multiprocess
 #Приложение для прослушивания endpoint
 app = FastAPI()
 
+#Настройка CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 #Инициализируем метрики
 metrics = Metrics()
 
@@ -23,7 +33,7 @@ metrics = Metrics()
 # model = modelInit()
 
 #Отдаём лог о запуске
-logger.info(f'''
+loggerSystem.info(f'''
 Программа запущена - {datetime.datetime.now()}
 Макс кол-во потоков - {metrics.threadCountMax}
 CUDA доступна: {torch.cuda.is_available()}
@@ -34,7 +44,7 @@ CUDA доступна: {torch.cuda.is_available()}
 async def listen(file: UploadFile = File(...), json_data: str = Form(...)):
     
     #Логируем получение данных
-    logger.info("Сервер получил новые данные")
+    loggerApiReceive.info("Сервер получил новые данные")
     
     #Получаем данные
     if json_data and file:
@@ -44,7 +54,7 @@ async def listen(file: UploadFile = File(...), json_data: str = Form(...)):
         
         #Валидация
         if not vaildData(data):
-            logger.error(f"Данные не прошли валидацию")
+            loggerErrors.error(f"Данные не прошли валидацию")
             raise HTTPException(500, "Ошибка валидации")            
         
         #Сохраняем файл
@@ -68,7 +78,7 @@ def handler(data):
     metrics.setHandledFiles()
     metrics.setQueue()
     
-    logger.info(f"Данные прошли валидацию, сессия: {data['session_id']} передана в обработку")
+    loggerApiReceive.info(f"Данные прошли валидацию, сессия: {data['session_id']} передана в обработку")
     
     #Выдача задачи на поток
     if metrics.threadConut < metrics.threadCountMax:
@@ -83,5 +93,5 @@ def handler(data):
     
     else:   
         #Добавляем в очередь
-        logger.info(f"Сессия: {data['session_id']} добавлена в очередь")
+        loggerSystem.info(f"Сессия: {data['session_id']} добавлена в очередь")
         metrics.queue.append(data)
