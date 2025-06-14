@@ -1,0 +1,10 @@
+# URL вашего Ollama-сервера
+ollama_url: "http://localhost:11434"
+
+# Имя модели, которую вы подгружаете (deepseek-custom)
+model_name: "deepseek-r1:32b"
+
+# Параметры управления MoE-контролем (температура для sharpen, доля дропаут)
+moe_control:
+  sharpen_temperature: 0.7
+  dropout_rate: 0.1

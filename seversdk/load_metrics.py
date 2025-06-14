@@ -1,33 +1,16 @@
 import json
+from seversdk.quaues import Quaues
+import yaml
 
 class Metrics:
     def __init__(self):
         self.threadCountMax = getMaxThread()
         self.threadConut = 0
-        self.queue = []
-        self.handledFiles = []#getHandledFiles()
+        self.queue = Quaues()
         self.version = getVersion()
         self.port = getPort()
-    
-    def setQueue(self) -> None:
-        with open('metrics/variables.json', 'r') as f:
-            data = json.load(f)
-        data['queue'] = self.queue
-        with open('metrics/variables.json', 'w') as f:
-            json.dump(data, f)
-    
-    def setHandledFiles(self) -> None:
-        with open('metrics/variables.json', 'r') as f:
-            data = json.load(f)
-        data['handled_files'] = self.handledFiles
-        with open('metrics/variables.json', 'w') as f:
-            json.dump(data, f)
-
-#Обработанные файлы
-def getHandledFiles() -> list:
-    with open('metrics/variables.json', 'r') as f:
-        data = json.load(f)
-    return data['handled_files']
+        self.pathRecieve = "storage/receive_data/"
+        self.yamlConfing = loadYaml()
 
 #Максимальное количество потоков
 def getMaxThread() -> int:
@@ -47,8 +30,7 @@ def getVersion() -> str:
         data = json.load(f)
     return data['version']
 
-#Очередь задач
-def getQueue() -> list:
-    with open('metrics/variables.json', 'r') as f:
-        data = json.load(f)
-    return data['queue']
+#Загрузка yaml конфигурации
+def loadYaml():
+    with open("config.yaml", "r", encoding="utf-8") as f:
+        return yaml.safe_load(f)

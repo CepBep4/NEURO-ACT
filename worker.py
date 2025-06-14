@@ -4,6 +4,7 @@ import os
 import json
 import traceback
 import time
+from seversdk import saveStructLogs
 
 #Рекурсивня функция работающая на потоке
 def worker(data: dict, metrics: Metrics):    
@@ -17,16 +18,16 @@ def worker(data: dict, metrics: Metrics):
             prompt = file.read().format(text=data["text"])
         
         #Дипсиковская дистилированная модель
-        response = pipe(prompt)
+        response = pipe(prompt, metrics)
         
         #Формируем путь до папки results
-        path = f"results/{data['session_id']}"
+        path = f"results/{data['track_id']}"
         
         #Создаём папку
         os.mkdir(path)
         
         #Добавляем в папку audio.mp3
-        fileRequest = open(f"storage/{data['session_id']}/audio.mp3", "rb")
+        fileRequest = open(f"{metrics.pathRecieve}{data['track_id']}/audio.mp3", "rb")
         with open(f"{path}/audio.mp3", 'wb') as audio:
             audio.write(fileRequest.read())
         fileRequest.close()
@@ -54,7 +55,7 @@ def worker(data: dict, metrics: Metrics):
         #Формируем exel отчёт
         saveToExcel([{
             "№":"1", #Номер строки
-            "Track ID":data["session_id"], #Айди сессии
+            "Track ID":data["track_id"], #Айди сессии
             "Timestamp":data["time_stamp"], #Метка времени
             "Original Text":data["text"], #Текст полученный после транскрибации
             "AI Response":response if isinstance(response, str) else response["output"], #Ответ нейросети
@@ -62,24 +63,26 @@ def worker(data: dict, metrics: Metrics):
             "Routing Score":"Временно отсутсвует" if isinstance(response, str) else response["token_routing_map"], #Карта маршрутизации токенов
             "Reasoning Summary":"Временно отсутсвует" if isinstance(response, str) else response["logic_summary"], #Итоговая логика формирования ответа
         }], f"{path}/summary.xlsx")
+        
+        saveStructLogs(data, response, prompt) #Сохраняем структурированные логи
             
         #models-olama-deepseek-r1-deepsteel-32b ggb
         ...
         
         #Выводим лог об обработке
-        loggerAnalysis.info(f"Сессия {data['session_id']} успешно обработана, время обработки: {round(time.time()-startTime, 3)}сек.")
+        loggerAnalysis.info(f"Сессия {data['track_id']} успешно обработана, время обработки: {round(time.time()-startTime, 3)}сек.")
     except Exception as e:
         traceback.print_exc()
-        loggerErrors.critical(f"Данные НЕ обработаны сессия: {data['session_id']} ошибка: {e}")
-    
-    #Проверяем очередь
-    if metrics.queue != []:
-        newTask = metrics.queue[0]
-        metrics.queue.remove(newTask)
+        loggerErrors.critical(f"Данные НЕ обработаны сессия: {data['track_id']} ошибка: {e}")
+        #Добавляем задачу в очередь ожидания
+        metrics.queue.setErrorTask(data)
         
+    #Проверяем очередь
+    nextTask = metrics.queue.getNextTask()
+    if nextTask:        
         #Запускаем задачу
-        loggerSystem.info(f"Сессия: {newTask['session_id']} передана в обработку")
-        worker(newTask, metrics)
+        loggerSystem.info(f"Сессия: {nextTask['track_id']} передана в обработку")
+        worker(nextTask, metrics)
     
     else:
         #Убираем поток с cчётчика

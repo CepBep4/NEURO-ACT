@@ -1,16 +1,17 @@
 import os
 import time
 import requests
+from seversdk import Metrics
 
 # Если Ollama слушает нестандартный адрес/порт, укажите здесь:
 OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 
 MODEL = "deepseek-r1:32b"
 
-def pipe(prompt: str) -> str:
-    url = f"{OLLAMA_HOST}/api/chat"
+def pipe(prompt: str, metrics: Metrics) -> str:
+    url = f"{metrics.yamlConfing['ollama_url']}/api/chat"
     payload = {
-        "model": MODEL,
+        "model": metrics.yamlConfing["ollama_model"],
         "messages": [
             {"role": "user", "content": prompt}
         ],

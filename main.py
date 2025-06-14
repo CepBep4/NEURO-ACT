@@ -58,12 +58,12 @@ async def listen(file: UploadFile = File(...), json_data: str = Form(...)):
             raise HTTPException(500, "Ошибка валидации")            
         
         #Сохраняем файл
-        os.mkdir(f"storage/{data['session_id']}")
-        with open(f"storage/{data['session_id']}/audio.mp3", 'wb') as buffer:
+        os.mkdir(f"{metrics.pathRecieve}{data['track_id']}")
+        with open(f"{metrics.pathRecieve}{data['track_id']}/audio.mp3", 'wb') as buffer:
             shutil.copyfileobj(file.file, buffer)
             
         #Сохраняем json
-        with open(f"storage/{data['session_id']}/metadata.json", 'w') as file:
+        with open(f"{metrics.pathRecieve}{data['track_id']}/metadata.json", 'w') as file:
             file.write(json.dumps(data))
     else:
         raise HTTPException(500, "Неверные данные")
@@ -78,7 +78,7 @@ def handler(data):
     metrics.setHandledFiles()
     metrics.setQueue()
     
-    loggerApiReceive.info(f"Данные прошли валидацию, сессия: {data['session_id']} передана в обработку")
+    loggerApiReceive.info(f"Данные прошли валидацию, сессия: {data['track_id']} передана в обработку")
     
     #Выдача задачи на поток
     if metrics.threadConut < metrics.threadCountMax:
@@ -93,5 +93,5 @@ def handler(data):
     
     else:   
         #Добавляем в очередь
-        loggerSystem.info(f"Сессия: {data['session_id']} добавлена в очередь")
-        metrics.queue.append(data)
+        loggerSystem.info(f"Сессия: {data['track_id']} добавлена в очередь")
+        metrics.queue.addTaskToQueue(data)
