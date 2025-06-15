@@ -1,5 +1,5 @@
 import json
-from seversdk.quaues import Quaues
+from handler import Quaues
 import yaml
 
 class Metrics:
