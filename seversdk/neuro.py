@@ -11,7 +11,7 @@ MODEL = "deepseek-r1:32b"
 def pipe(prompt: str, metrics: Metrics) -> str:
     url = f"{metrics.yamlConfing['ollama_url']}/api/chat"
     payload = {
-        "model": metrics.yamlConfing["ollama_model"],
+        "model": metrics.yamlConfing["model_name"],
         "messages": [
             {"role": "user", "content": prompt}
         ],
