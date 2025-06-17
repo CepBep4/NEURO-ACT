@@ -9,7 +9,7 @@ class Metrics:
         self.queue = Quaues()
         self.version = getVersion()
         self.port = getPort()
-        self.pathRecieve = "storage/receive_data/"
+        self.pathRecieve = "storage/received_data/"
         self.yamlConfing = loadYaml()
 
 #Максимальное количество потоков
