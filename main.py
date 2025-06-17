@@ -26,6 +26,8 @@ app.add_middleware(
 )
 
 
+from seversdk.neuro import pipe
+
 #Инициализируем метрики
 metrics = Metrics()
 
@@ -40,6 +42,10 @@ CUDA доступна: {torch.cuda.is_available()}
 ''')
 
 #Прослушивание endpoint FAST-API
+@app.get("/")
+async def checkActive():
+    return {"success": True}
+
 @app.post("/sendHandle/")
 async def listen(file: UploadFile = File(...), json_data: str = Form(...)):
     
