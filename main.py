@@ -1,8 +1,6 @@
 import threading
-import multiprocessing
 from worker import worker
 from seversdk import loggerErrors, loggerApiReceive, loggerSystem, Metrics, vaildData
-import traceback
 from fastapi import FastAPI, File, Form, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,6 +9,7 @@ import os
 import shutil
 import torch
 import datetime
+import uvicorn
 
 WORK_MODE = 't' # t - threadiing, p - multiprocess
 
@@ -97,3 +96,6 @@ def handler(data):
         #Добавляем в очередь
         loggerSystem.info(f"Сессия: {data['track_id']} добавлена в очередь")
         metrics.queue.addTaskToQueue(data)
+        
+if __name__ == "__main__":
+    uvicorn.run(app, port=metrics.port, host="0.0.0.0")
