@@ -73,11 +73,7 @@ async def listen(file: UploadFile = File(...), json_data: str = Form(...)):
         
 
 #Менеджер по потокам, функция раздаёт задачи
-def handler(data):
-    #Обновляем метрики
-    metrics.setHandledFiles()
-    metrics.setQueue()
-    
+def handler(data):    
     loggerApiReceive.info(f"Данные прошли валидацию, сессия: {data['track_id']} передана в обработку")
     
     #Выдача задачи на поток
