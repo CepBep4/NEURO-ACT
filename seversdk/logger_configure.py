@@ -42,7 +42,7 @@ def setup_logger(name: str,
 
     return logger
 
-loggerApiReceive = setup_logger(__name__, log_file='logs/api_receive.log', level=logging.DEBUG)
-loggerAnalysis = setup_logger(__name__, log_file='logs/analysis.log', level=logging.DEBUG)
-loggerErrors = setup_logger(__name__, log_file='logs/errors.log', level=logging.DEBUG)
-loggerSystem = setup_logger(__name__, log_file='logs/system.log', level=logging.DEBUG)
+loggerApiReceive = setup_logger("api-receive", log_file='logs/api_receive.log', level=logging.DEBUG)
+loggerAnalysis = setup_logger("analyzes", log_file='logs/analysis.log', level=logging.DEBUG)
+loggerErrors = setup_logger("errors", log_file='logs/errors.log', level=logging.DEBUG)
+loggerSystem = setup_logger("system", log_file='logs/system.log', level=logging.DEBUG)
